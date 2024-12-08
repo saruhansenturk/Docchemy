@@ -21,6 +21,8 @@ namespace Docchemy.Test.Directory1
                 age = age
             };// this variable is a annonymous type. It returns name and age.
 
+
+
         }
     }
 }

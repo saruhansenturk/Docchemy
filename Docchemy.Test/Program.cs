@@ -10,10 +10,12 @@ using Docchemy.Analysis.IncrementalAnalysis;
 
 //await ReferenceSolver.AnalyzeProject(@"C:\Users\srhn7\source\repos\Docchemy\Docchemy.Test\Docchemy.Test.csproj", analyzedProjects);
 
+string solutionPath = @"C:\Users\srhn7\source\repos\Docchemy";
+string cacheFilePath = @"C:\Users\srhn7\source\repos\Docchemy\cache.json";
 
-var cache = ChangeAnalysis.LoadCache();
-ChangeAnalysis.AnalyzeProject(@"C:\Users\srhn7\source\repos\Docchemy\Docchemy.Test\Docchemy.Test.csproj", cache);
-ChangeAnalysis.SaveCache(cache);
+var cache = ChangeAnalysis.LoadCache(cacheFilePath);
+await ChangeAnalysis.AnalyzeProjectAsync(solutionPath, cache);
+ChangeAnalysis.SaveCache(cacheFilePath, cache);
 
 
 
