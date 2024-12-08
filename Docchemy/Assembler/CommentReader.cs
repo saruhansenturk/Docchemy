@@ -11,41 +11,37 @@ namespace Docchemy.Assembler
 {
     public class CommentReader
     {
-        public CommentReader()
+        public static async Task ReadCommentAsync(string csFilePath)
         {
-            var code = @"
-            // This is a sample comment
-            public class SampleClass 
-            {
-                // Method to add two numbers
-                public int Add(int a, int b) 
-                {
-                    return a + b; // Inline comment
-                }
-            }";
+            var code = await File.ReadAllTextAsync(csFilePath);
 
             var tree = CSharpSyntaxTree.ParseText(code);
+            var root = await tree.GetRootAsync();
 
-            var root = tree.GetRoot();
+            // analyzing comments and classes
+            var comments = root.DescendantTrivia()
+                .Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+                                 trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                .Select(trivia => trivia.ToString());
 
-            var methodComments = root.DescendantTrivia()
-                .OfType<MethodDeclarationSyntax>() // get the methods
-                .SelectMany(method => method.DescendantTrivia()
-                    .Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
-                    .Select(trivia => new
-                    {
-                        MethodName = method.Identifier.ValueText, // get the method name
-                        Comment = trivia.ToString(),
-                        LineNumber = trivia.GetLocation().GetLineSpan().StartLinePosition.Line + 1
-                    }));
+            var classes = root.DescendantNodes()
+                .OfType<ClassDeclarationSyntax>()
+                .Select(t => t.Identifier.Text);
 
-            foreach (var comment in methodComments)
+            Console.WriteLine("Comments");
+            foreach (var comment in comments)
             {
-                Console.WriteLine(comment.MethodName);
-                Console.WriteLine(comment.Comment);
-                Console.WriteLine(comment.LineNumber);
-                Console.WriteLine("-------------------");
+                Console.WriteLine(comment);
             }
+
+            Console.WriteLine("Classes");
+            foreach (var className in classes)
+            {
+                Console.WriteLine(className);
+            }
+
+            Console.WriteLine(new string('-', 40));
+
 
         }
     }

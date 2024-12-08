@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using Docchemy.Assembler;
 
 namespace Docchemy.Analysis.IncrementalAnalysis;
 
@@ -9,7 +10,7 @@ public class ChangeAnalysis
     public static async Task AnalyzeProjectAsync(string solutionPath, Dictionary<string, string>? cache)
     {
         // get all .csproj files
-        var csProjFiles = Directory.GetFiles(solutionPath, "*.csproj", SearchOption.AllDirectories);
+        var csProjFiles = Directory.GetFiles(solutionPath, "*.csproj", SearchOption.AllDirectories).Where(t => !t.Contains("Docchemy.csproj"));
 
         foreach (var csProjFile in csProjFiles)
         {
@@ -18,7 +19,9 @@ public class ChangeAnalysis
             // get current context .cs files
             var csFiles = Directory.GetFiles(projectDir, "*.cs", SearchOption.AllDirectories);
 
-            foreach (var csFile in FilterCsFiles(csFiles))
+            var filteredCsFiles = FilterCsFiles(csFiles);
+
+            foreach (var csFile in filteredCsFiles)
             {
                 string hash = await _ComputeFileHashAsync(csFile);
 
@@ -28,6 +31,8 @@ public class ChangeAnalysis
                 }
                 else
                 {
+                    await CommentReader.ReadCommentAsync(csFile);
+
                     Console.WriteLine($"Change detected in {csFile}, updating hash...");
                     cache[csFile] = hash;
                 }
@@ -64,15 +69,7 @@ public class ChangeAnalysis
             t.EndsWith(".cs") &&
             !t.Contains("GlobalUsings") &&
             !t.Contains(".g.cs") &&
-            !t.Contains(".AssemblyAttributes.cs")).ToArray();
-}
-public class ProjectCacheEntry
-{
-    public string Hash { get; set; }
-    public DateTime LastAnalyzed { get; set; }
-}
-
-public class AnalysisCache
-{
-    public Dictionary<string, string> FileHashes { get; set; } = new Dictionary<string, string>();
+            !t.Contains(".AssemblyAttributes.cs") &&
+            !t.Contains(".AssemblyInfo.cs"))
+            .ToArray();
 }
