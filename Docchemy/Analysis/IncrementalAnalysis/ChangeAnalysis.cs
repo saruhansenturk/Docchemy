@@ -31,7 +31,9 @@ public class ChangeAnalysis
                 }
                 else
                 {
-                    await CommentReader.ReadCommentAsync(csFile);
+                    // analyze all cs files and get all comments, class and method names
+                    // TODO devam edilecek. buradaki degeri AI'in anlayacagi bicimde ayarlamak gerekiyor.
+                    var ss = await CommentReader.ReadCommentAsync(csFile);
 
                     Console.WriteLine($"Change detected in {csFile}, updating hash...");
                     cache[csFile] = hash;
