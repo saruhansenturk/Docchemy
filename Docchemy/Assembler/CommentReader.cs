@@ -18,43 +18,47 @@ namespace Docchemy.Assembler
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = await tree.GetRootAsync();
 
+            var retriever = new Retriever();
+            retriever.GetClassesInfo(csFilePath);
+
             // analyzing comments and classes
-            var comments = root.DescendantTrivia()
-                .Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
-                                 trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
-                .Select(trivia => trivia.ToString()).ToList();
+            //var comments = root.DescendantTrivia()
+            //    .Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+            //                     trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
+            //    .Select(trivia => trivia.ToString()).ToList();
 
-            var classes = root.DescendantNodes()
-                .OfType<ClassDeclarationSyntax>()
-                .Select(t => t.Identifier.Text).ToList();
+            //var classes = root.DescendantNodes()
+            //    .OfType<ClassDeclarationSyntax>()
+            //    .Select(t => t.Identifier.Text).ToList();
 
-            StringBuilder commentsByClassesBuilder = new StringBuilder();
+            //StringBuilder commentsByClassesBuilder = new StringBuilder();
 
-            if (comments.Count > 0 || classes.Count > 0)
-            {
+            //if (comments.Count > 0 || classes.Count > 0)
+            //{
 
-                Console.WriteLine("Classes");
-                foreach (var className in classes)
-                {
-                    Console.WriteLine(className);
-                    commentsByClassesBuilder.AppendLine(className);
-                }
+            //    Console.WriteLine("Classes");
+            //    foreach (var className in classes)
+            //    {
+            //        Console.WriteLine(className);
+            //        commentsByClassesBuilder.AppendLine(className);
+            //    }
 
-                commentsByClassesBuilder.AppendLine("--------------------");
+            //    commentsByClassesBuilder.AppendLine("--------------------");
 
-                Console.WriteLine("Comments");
-                foreach (var comment in comments)
-                {
-                    Console.WriteLine(comment);
-                    commentsByClassesBuilder.AppendLine(comment);
-                }
+            //    Console.WriteLine("Comments");
+            //    foreach (var comment in comments)
+            //    {
+            //        Console.WriteLine(comment);
+            //        commentsByClassesBuilder.AppendLine(comment);
+            //    }
 
-                commentsByClassesBuilder.AppendLine("--------------------");
-            }
+            //    commentsByClassesBuilder.AppendLine("--------------------");
+            //}
             
-            Console.WriteLine(new string('-', 40));
+            //Console.WriteLine(new string('-', 40));
 
-            return commentsByClassesBuilder.ToString();
+            //return commentsByClassesBuilder.ToString();
+            return "";
         }
     }
 }
