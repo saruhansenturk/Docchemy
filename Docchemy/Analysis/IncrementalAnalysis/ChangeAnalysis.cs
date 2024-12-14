@@ -11,6 +11,7 @@ public class ChangeAnalysis
     {
         // get all .csproj files
         var csProjFiles = Directory.GetFiles(solutionPath, "*.csproj", SearchOption.AllDirectories).Where(t => !t.Contains("Docchemy.csproj"));
+        var analyzedList = new Dictionary<string, List<string>>();
 
         foreach (var csProjFile in csProjFiles)
         {
@@ -21,6 +22,7 @@ public class ChangeAnalysis
 
             var filteredCsFiles = FilterCsFiles(csFiles);
 
+            var analyzedCsList = new List<string>();
             foreach (var csFile in filteredCsFiles)
             {
                 string hash = await _ComputeFileHashAsync(csFile);
@@ -32,13 +34,16 @@ public class ChangeAnalysis
                 else
                 {
                     // analyze all cs files and get all comments, class and method names
-                    // TODO devam edilecek. buradaki degeri AI'in anlayacagi bicimde ayarlamak gerekiyor.
-                    var ss = await CommentReader.ReadCommentAsync(csFile);
+                    var analyzedText = await CommentReader.ReadCommentAsync(csFile);
+
+                    analyzedCsList.Add(analyzedText);
 
                     Console.WriteLine($"Change detected in {csFile}, updating hash...");
                     cache[csFile] = hash;
                 }
             }
+
+            analyzedList.TryAdd(csProjFile, analyzedCsList);
         }
     }
 

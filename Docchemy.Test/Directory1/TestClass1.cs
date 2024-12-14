@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Docchemy.Test.Directory1
 {
+    /// <summary>
+    /// You are reading now Test Class 1.
+    /// </summary>
     internal class TestClass1
     {
         /// <summary>

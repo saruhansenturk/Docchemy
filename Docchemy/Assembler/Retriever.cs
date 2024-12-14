@@ -1,9 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 using Docchemy.Assembler.AssemblerService;
-using Docchemy.CodeElements;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -27,9 +24,10 @@ public class Retriever : RetrieverService
             stringBuilder.AppendLine($"Classes: {classDeclarationSyntax.Identifier.Text}");
 
             // get the summaries
-            var classComments = classDeclarationSyntax.GetLeadingTrivia()
+            var classComments = classDeclarationSyntax
+                .GetLeadingTrivia()
                 .Select(trivia => trivia.ToString().Trim())
-                .Where(comment => comment.StartsWith("///"));
+                .Where(comment => comment.Contains("summary") && comment.Contains("///"));
 
             foreach (var classComment in classComments)
             {
@@ -44,7 +42,7 @@ public class Retriever : RetrieverService
 
                 var fieldComments = field.GetLeadingTrivia()
                     .Select(trivia => trivia.ToString().Trim())
-                    .Where(comment => comment.StartsWith("///"));
+                    .Where(comment => comment.Contains("summary") && comment.Contains("///"));
 
                 foreach (var comment in fieldComments)
                 {
@@ -70,28 +68,31 @@ public class Retriever : RetrieverService
 
                 var methodComments = method.GetLeadingTrivia()
                     .Select(trivia => trivia.ToString().Trim())
-                    .Where(comment => comment.StartsWith("///"));
+                    .Where(comment => comment.Contains("summary") && comment.Contains("///"));
 
                 foreach (var comment in methodComments)
                 {
                     stringBuilder.AppendLine($"   Comment: {comment}");
                 }
 
-                // Method içindeki inline yorumları ve satırdaki kodu al
-                var statements = method.Body?.Statements;
+                var statements = method.Body?.DescendantNodes().OfType<StatementSyntax>();
                 if (statements != null)
                 {
                     foreach (var statement in statements)
                     {
                         var inlineComments = statement.GetLeadingTrivia()
-                            .Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
+                            .Concat(statement.GetTrailingTrivia())
+                            .Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+                                             trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
+                                             trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia))
                             .Select(trivia => trivia.ToString().Trim());
+
+                        var fullStatementText = statement.ToFullString().Trim();
 
                         foreach (var inlineComment in inlineComments)
                         {
-                            var lineText = statement.ToString().Split('\n').FirstOrDefault()?.Trim();
                             stringBuilder.AppendLine($"    Inline Comment: {inlineComment}");
-                            stringBuilder.AppendLine($"    Code: {lineText}");
+                            stringBuilder.AppendLine($"    Code: {fullStatementText}");
                         }
                     }
                 }
@@ -99,27 +100,5 @@ public class Retriever : RetrieverService
         }
 
         return stringBuilder.ToString();
-    }
-
-    public override List<MethodInfoWithSummary> GetMethodsInfo(Type type, XDocument xmlDoc)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override List<InlineComment> GetInlineComments(string code)
-    {
-        throw new NotImplementedException();
-    }
-
-    private string _GetXmlSummary(XDocument xmlDoc, MemberInfo member)
-    {
-        var memberName = member is Type type ?
-            $"T:{type.Name}" :
-            $"M:{member.DeclaringType?.FullName}.{member.Name}";
-
-        var summaryElement = xmlDoc.Descendants("member").FirstOrDefault(m => m.Attribute("name")?.Value == memberName);
-
-
-        return summaryElement?.Element("summary")?.Value.Trim() ?? string.Empty;
     }
 }

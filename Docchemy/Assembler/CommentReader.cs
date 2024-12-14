@@ -19,7 +19,7 @@ namespace Docchemy.Assembler
             var root = await tree.GetRootAsync();
 
             var retriever = new Retriever();
-            retriever.GetClassesInfo(csFilePath);
+            var analyzerResult = retriever.GetClassesInfo(csFilePath);
 
             // analyzing comments and classes
             //var comments = root.DescendantTrivia()
@@ -58,7 +58,7 @@ namespace Docchemy.Assembler
             //Console.WriteLine(new string('-', 40));
 
             //return commentsByClassesBuilder.ToString();
-            return "";
+            return analyzerResult;
         }
     }
 }
