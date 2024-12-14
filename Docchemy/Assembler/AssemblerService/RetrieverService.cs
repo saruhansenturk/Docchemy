@@ -5,7 +5,7 @@ namespace Docchemy.Assembler.AssemblerService;
 
 public abstract class RetrieverService
 {
-    public abstract List<ClassInfo> GetClassesInfo(string csFilePath);
+    public abstract string GetClassesInfo(string csFilePath);
 
     public abstract List<MethodInfoWithSummary> GetMethodsInfo(Type type, XDocument xmlDoc);
 
