@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Docchemy.Constants
+namespace Docchemy.Generator.DocumenterService
 {
-    public enum Dependency
+    public interface IBlackboxDocumenter: IDocumenter
     {
-        ProjectReference,
-        PackageReference
     }
 }
