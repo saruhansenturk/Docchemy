@@ -1,4 +1,5 @@
 ﻿using Docchemy.Analysis.ProjectAnalyzer.CommentAnalyzer;
+using Docchemy.Generator;
 
 namespace Docchemy.Analysis.ProjectAnalyzer;
 
@@ -36,6 +37,10 @@ public class ChangeAnalysis
 
             analyzedList.TryAdd(csProjFile, analyzedCsList);
         }
+
+        var blackboxClient = new BlackboxDocumenter(TimeSpan.FromSeconds(30));
+
+        var blackboxAiResponse = await blackboxClient.DocumantateAsync(analyzedList);
     }
     public static string[] FilterCsFiles(string[] allFiles) =>
             allFiles.Where(t =>
