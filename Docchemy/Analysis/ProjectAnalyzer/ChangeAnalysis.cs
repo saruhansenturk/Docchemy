@@ -1,12 +1,18 @@
 ﻿using Docchemy.Analysis.ProjectAnalyzer.CommentAnalyzer;
 using Docchemy.Generator;
+using Docchemy.Services;
+using Microsoft.Extensions.DependencyInjection;
+using System.Text;
+using System.Text.Json;
 
 namespace Docchemy.Analysis.ProjectAnalyzer;
 
 public class ChangeAnalysis
 {
-    public static async Task AnalyzeProjectAsync(string solutionPath)
+    public static async Task AnalyzeProjectAsync(string solutionPath, IServiceProvider serviceProvider)
     {
+        var documentService = serviceProvider.GetRequiredService<DocumentService>();
+
         // get all .csproj files
         var csProjFiles = Directory.GetFiles(solutionPath, "*.csproj", SearchOption.AllDirectories)
             .Where(t => !t.Contains("Docchemy.csproj"));
@@ -38,9 +44,25 @@ public class ChangeAnalysis
             analyzedList.TryAdd(csProjFile, analyzedCsList);
         }
 
-        var blackboxClient = new BlackboxDocumenter(TimeSpan.FromSeconds(30));
+        var sb = new StringBuilder();
+        sb.AppendLine("Please generate a document based on the following project analysis:");
+        sb.AppendLine();
 
-        var blackboxAiResponse = await blackboxClient.DocumantateAsync(analyzedList);
+        foreach (var project in analyzedList)
+        {
+            sb.AppendLine($"📂 Project: {project.Key}");
+
+            foreach (var item in project.Value)
+            {
+                sb.AppendLine($"   - {item}");
+            }
+
+            sb.AppendLine();
+        }
+
+        string promptText = sb.ToString();
+
+        await documentService.GetMessageStreamAsync(promptText);
     }
     public static string[] FilterCsFiles(string[] allFiles) =>
             allFiles.Where(t =>
