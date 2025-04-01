@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0-preview.2.25163.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Docchemy\Docchemy.csproj" />
+	</ItemGroup>
+
+
+	<Target Name="AskUserForDocChemy" BeforeTargets="Build">
+		<!-- Dış uygulamanın çıktısını geçici bir dosyaya yönlendiriyoruz -->
+		<Exec Command="dotnet output/DocchemyAskConsole.dll > $(TempDir)\output.txt" />
+
+		<!-- Çıktı dosyasını okuyoruz ve EnableDocChemy özelliğini ayarlıyoruz -->
+		<ReadLinesFromFile File="$(TempDir)\output.txt">
+			<Output TaskParameter="Lines" PropertyName="ConsoleOutput" />
+		</ReadLinesFromFile>
+
+		<!-- ConsoleOutput özelliğine göre dökümantasyon oluşturulacak mı kararını alıyoruz -->
+		<Message Text="ConsoleOutput: $(ConsoleOutput)" Importance="high" />
+	</Target>
+
+	<Target Name="GenerateDocumentation" Condition="'$(ConsoleOutput)' == 'yes'">
+		<Message Text="Dökümantasyon oluşturuluyor..." Importance="high"/>
+		<!-- Burada dökümantasyon oluşturma işlemini başlatabilirsiniz -->
+	</Target>
+
+
+
+
+</Project>

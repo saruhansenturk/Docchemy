@@ -18,7 +18,7 @@ namespace Docchemy.Resolver
             services.AddOpenAIChatCompletion(
                 modelId: "qwen/qwq-32b:free",
                 openAIClient: new OpenAIClient(
-                    credential: new ApiKeyCredential("APIKEY"),
+                    credential: new ApiKeyCredential("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"),
                     options: new OpenAIClientOptions
                     {
                         Endpoint = new Uri("https://openrouter.ai/api/v1")
