@@ -10,11 +10,25 @@ class Program
     static async Task Main(string[] args)
     {
         // 1. Solution dizinini otomatik olarak almak
-        string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+        string solutionPath = FindSolutionDirectory();
+
+
+        if (solutionPath != null)
+        {
+            Console.WriteLine($"Solution dizini: {solutionPath}");
+        }
+        else
+        {
+            Console.WriteLine("❌ Solution bulunamadı!");
+            return;
+        }
 
         // Kullanıcıya dökümantasyon oluşturma isteği sorulacak
         Console.Write("Do you want to generate documentation? (Y/N): ");
         var input = Console.ReadLine()?.Trim().ToUpper();
+
+        Console.Write("Where do you want to create this document?: ");
+        var outputPath = Console.ReadLine()?.Trim();
 
         // Eğer kullanıcı "Y" derse, dökümantasyon işlemi başlatılacak
         if (input == "Y")
@@ -33,7 +47,7 @@ class Program
             var services = host.Services;
 
             // 4. Proje analizini başlat
-            await ChangeAnalysis.AnalyzeProjectAsync(solutionPath, services);
+            await ChangeAnalysis.AnalyzeProjectAsync(solutionPath, outputPath, services);
 
             Console.WriteLine("Documentation has been generated successfully.");
             host.Run();
@@ -43,4 +57,22 @@ class Program
             Console.WriteLine("Documentation generation skipped.");
         }
     }
+
+    public static string? FindSolutionDirectory()
+    {
+        var dir = Directory.GetCurrentDirectory();
+
+        while (dir != null)
+        {
+            if (Directory.GetFiles(dir, "*.sln").Any())
+            {
+                return dir; // Solution klasörü bulundu
+            }
+
+            dir = Directory.GetParent(dir)?.FullName;
+        }
+
+        return null; // Solution bulunamadı
+    }
+
 }

@@ -9,7 +9,7 @@ namespace Docchemy.Analysis.ProjectAnalyzer;
 
 public class ChangeAnalysis
 {
-    public static async Task AnalyzeProjectAsync(string solutionPath, IServiceProvider serviceProvider)
+    public static async Task AnalyzeProjectAsync(string solutionPath, string? outPutPath, IServiceProvider serviceProvider)
     {
         var documentService = serviceProvider.GetRequiredService<DocumentService>();
 
@@ -62,7 +62,7 @@ public class ChangeAnalysis
 
         string promptText = sb.ToString();
 
-        await documentService.GetMessageStreamAsync(promptText);
+        await documentService.GetMessageStreamAsync(promptText, outPutPath);
     }
     public static string[] FilterCsFiles(string[] allFiles) =>
             allFiles.Where(t =>
