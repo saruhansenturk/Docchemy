@@ -14,5 +14,11 @@
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.44.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="libwkhtmltox.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 
 </Project>

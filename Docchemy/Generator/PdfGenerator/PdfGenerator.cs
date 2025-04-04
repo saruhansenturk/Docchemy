@@ -28,8 +28,38 @@ namespace Docchemy.Generator.PdfGenerator
 
             var converter = new BasicConverter(new PdfTools());
 
-            string htmlContent = Markdown.ToHtml(markdownContent);
+            string htmlBody = Markdown.ToHtml(markdownContent);
 
+            string htmlContent = $@"
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset='UTF-8'>
+                                <style>
+                                    body {{
+                                        font-family: 'DejaVu Sans', sans-serif;
+                                        font-size: 14px;
+                                        line-height: 1.6;
+                                        padding: 20px;
+                                    }}
+                                    h1, h2, h3 {{
+                                        color: #2c3e50;
+                                    }}
+                                    pre, code {{
+                                        background-color: #f4f4f4;
+                                        padding: 4px;
+                                        border-radius: 4px;
+                                        font-family: Consolas, monospace;
+                                    }}
+                                    ul {{
+                                        margin-left: 20px;
+                                    }}
+                                </style>
+                            </head>
+                            <body>
+                            {htmlBody}
+                            </body>
+                            </html>";
             var pdfDocument = new HtmlToPdfDocument
             {
                 GlobalSettings = new()
