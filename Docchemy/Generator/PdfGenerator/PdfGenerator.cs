@@ -18,7 +18,7 @@ namespace Docchemy.Generator.PdfGenerator
         //    _pdfConverter = pdfConverter;
         //}
 
-        public void GeneratePdfFromMarkdown(string markdownContent, string? outputPath)
+        public void GeneratePdfFromMarkdown(string? markdownContent, string? outputPath)
         {
             if (string.IsNullOrEmpty(outputPath))
             {

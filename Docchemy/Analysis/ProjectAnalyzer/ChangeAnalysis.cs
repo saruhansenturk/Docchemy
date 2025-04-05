@@ -45,7 +45,7 @@ public class ChangeAnalysis
         }
 
         var sb = new StringBuilder();
-        sb.AppendLine("Please generate a document based on the following project analysis with markdown format. Please add line break(\\n) needed fields:");
+        sb.AppendLine("Please generate a document for developer guide:");
         sb.AppendLine();
 
         foreach (var project in analyzedList)

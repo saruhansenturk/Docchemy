@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<PackageId>Docchemy</PackageId>
+		<Version>1.0.3-local</Version>
+		<Authors>saruhan.senturk</Authors>
+		<Description>Docchemy library</Description>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -15,10 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="libwkhtmltox.dll">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Include="runtimes\**\*" Pack="true" PackagePath="runtimes\" />
 	</ItemGroup>
-
-
 </Project>
